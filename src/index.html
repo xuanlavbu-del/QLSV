@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학생 출석 관리 시스템</title>
+    <title>학생 출석 관리</title>
 
     <style>
         :root {
@@ -396,6 +394,110 @@
             font-size: 21px;
           }
         }
+
+        /* ============================
+           IN / XUẤT PDF
+        ============================ */
+        @media print {
+          @page {
+            size: A4 landscape;
+            margin: 10mm;
+          }
+
+          body {
+            background: white !important;
+            color: black !important;
+            font-size: 20px;
+          }
+
+          header {
+            background: white !important;
+            color: black !important;
+            box-shadow: none !important;
+            padding: 0 0 10px 0 !important;
+          }
+
+          h1 {
+            color: black !important;
+            font-size: 18px !important;
+          }
+
+          .subtitle {
+            color: #333 !important;
+          }
+
+          .container {
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          .stats {
+            grid-template-columns: repeat(5, 1fr) !important;
+            gap: 5px !important;
+            margin-bottom: 8px !important;
+          }
+
+          .stat-card {
+            box-shadow: none !important;
+            padding: 7px !important;
+          }
+
+          .stat-number {
+            font-size: 16px !important;
+          }
+
+          .toolbar,
+          .action-buttons,
+          th button,
+          .toast,
+          .modal {
+            display: none !important;
+          }
+
+          .table-wrapper {
+            border: 1px solid #999 !important;
+            border-radius: 0 !important;
+            overflow: visible !important;
+            box-shadow: none !important;
+          }
+
+          table {
+            width: 100% !important;
+            min-width: 0 !important;
+            font-size: 8px !important;
+          }
+
+          th, td {
+            padding: 4px 3px !important;
+            border: 1px solid #bbb !important;
+            white-space: normal !important;
+          }
+
+          th {
+            position: static !important;
+            background: #f2f2f2 !important;
+          }
+
+          .status-select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            border: none !important;
+            background: transparent !important;
+            padding: 0 !important;
+            min-width: 0 !important;
+            font-size: 8px !important;
+          }
+
+          .rate-bar {
+            display: none !important;
+          }
+
+          .student-code {
+            font-size: 7px !important;
+          }
+        }
+
     </style>
 </head>
 
@@ -404,7 +506,7 @@
 <header>
     <div class="header-inner">
         <div>
-            <h1>🎓 학생 출석 관리 시스템</h1>
+            <h1>🎓 학생 출석 관리</h1>
             <div class="subtitle">
                 금융기관론 001분반 · 학생 출석 관리
             </div>
@@ -494,6 +596,10 @@
 
         <button class="btn-primary" onclick="exportExcel()">
             📊 Excel 다운로드
+        </button>
+
+        <button class="btn-success" onclick="printAttendancePDF()">
+            🖨️ PDF 인쇄
         </button>
 
         <button class="btn-danger" onclick="clearAllData()">
@@ -817,7 +923,7 @@
         unexcused: "무단결석"
       };
 
-      return labels[status] || "미입력";
+      return labels[status] || "";
     }
 
     /* ============================
@@ -980,9 +1086,7 @@
                         )
                       "
                     >
-                      <option value="">
-                        미입력
-                      </option>
+                      <option value=""></option>
 
                       <option
                         value="present"
@@ -1344,6 +1448,26 @@
         workbook,
         "학생_출석기록.xlsx"
       );
+    }
+
+    /* ============================
+       IN / LƯU THÀNH PDF
+    ============================ */
+
+    function printAttendancePDF() {
+      // Tên tài liệu sẽ hiện trong tiêu đề khi in trên trình duyệt.
+      const oldTitle = document.title;
+      document.title = "금융기관론 001분반 _ 출석기록";
+
+      showToast("인쇄 창을 엽니다. 프린터에서 'PDF로 저장'을 선택하세요.");
+
+      setTimeout(() => {
+        window.print();
+
+        setTimeout(() => {
+          document.title = oldTitle;
+        }, 1000);
+      }, 150);
     }
 
     /* ============================
